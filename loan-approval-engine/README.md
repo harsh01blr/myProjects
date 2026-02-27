@@ -1,11 +1,21 @@
-Loan Decision Engine
-Overview
-This project implements a modular, batch‑oriented Decision Support System (DSS) for loan underwriting. It includes a synthetic dataset generator, a bottom‑up rules engine, and an evaluator that processes all batches and produces a single authoritative decision ledger.
+cat > README.md << 'EOF'
+# Loan Approver Engine
 
-The system mirrors enterprise DSS patterns such as deterministic batch processing, fail‑fast integrity checks, simple operational logs, and clean separation between inputs and outputs.
+## Executive Summary
+The Loan Approver Engine is a deterministic, batch‑oriented Decision Support System designed to reflect enterprise‑grade underwriting pipelines. It produces a single authoritative decision ledger from structured applicant batches, applying transparent rule logic and enforcing strict data‑integrity guarantees. The system emphasizes reproducibility, operational clarity, and clean separation of responsibilities across generation, rule evaluation, and aggregation stages.
 
-Repository Structure
-Code
+## System Overview
+The engine processes synthetic applicant data through a modular pipeline consisting of three independent components: a dataset generator, a bottom‑up rules engine, and a batch evaluator. Each component is isolated, stateless, and deterministic, ensuring predictable behavior across runs and enabling straightforward auditability.
+
+The design aligns with enterprise DSS principles:
+- Deterministic batch processing with predictable file naming and ordering
+- Fail‑fast integrity checks to prevent partial or inconsistent outputs
+- A single source of truth for downstream consumption
+- Transparent, explainable rule logic suitable for governance and audit review
+- Operational logs that provide visibility without introducing side effects
+
+## Repository Structure
+
 loan-decision-engine/
 ├─ data/                     # Generated input batches (10 × 10,000 rows)
 ├─ outputs/                  # Final combined decision ledger
@@ -14,17 +24,24 @@ loan-decision-engine/
 ├─ rules_engine.py           # Bottom-up underwriting rules
 └─ evaluator.py              # Applies rules to all batches and produces final output
 
-Components
-Dataset Generator (dataset_generator.py)
-Generates 10 CSV batches (batch_01.csv … batch_10.csv), each containing 10,000 synthetic loan applications.
+## Component Architecture
+
+### Dataset Generator (`dataset_generator.py`)
+Generates ten CSV batches (`batch_01.csv` … `batch_10.csv`), each containing 10,000 synthetic loan applications.
 
 Key characteristics:
+- Sequential `application_id` across all batches
+- Overwrites existing files to maintain deterministic state
+- Simple `[INFO]` logs for operational visibility
+- Features include credit score, income, DTI, employment status, age, and loan amount
 
-application_id is the first column and strictly sequential across all batches.
+**Execution:**
+```bash
+python dataset_generator.py
 
-Each batch overwrites any existing file with the same name.
 
-Simple [INFO] logs show progress.
+
+ logs show progress.
 
 Data includes credit score, income, DTI, employment status, age, and loan amount.
 
